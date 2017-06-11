@@ -233,6 +233,8 @@
                             powerOutage.repairCrew = crew;
                             powerOutage.workStartTime = simulationTime;
 
+                            powerOutage.repairEstimate += (Math.abs(powerOutage.x - crew.x) + Math.abs(powerOutage.y - crew.y)) * 3600 / speedLimit;
+
                             $("#outputLog").append("<p>Assigning crew number " + crew.crewNumber + " to outage " + powerOutage.powerOutageNumber + " at time " + timeString + "</p>");
                             break;
                         }
