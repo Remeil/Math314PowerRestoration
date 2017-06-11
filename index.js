@@ -2,23 +2,11 @@
 (function() {
     $(document).ready(function() {
 
-        function convertToSeconds(hour, minute) {
-            return hour * 3600 + minute * 60;
-        }
-
-        function convertToHourMinute(seconds) {
-            return {
-                hour: Math.floor(seconds / 3600),
-                minute: Math.floor(seconds % 3600 / 60),
-                second: seconds % 60
-            };
-        }
-
         var reportedPowerOutages = [];
         var repairCrews = [];
-        var simulationTime = 0; //simulation times measured in seconds
+        var simulationTime = 0; //simulation times measured in hours
         var stormIsActive = true;
-        var stormEnds = convertToSeconds(6, 0);
+        var stormEnds = 6; //storm ends at 6
         var simulationIsNotComplete = true;
 
         var speedLimit = 60;
@@ -53,14 +41,14 @@
 
         //Simulation functions
         function powerOutageUrgency(potentialRepairCrew) {
-            //taxicab geometry
-            var MAXIMUMDISTANCE = 230;
+            var MAXDISTANCE = 230;
 
-            var distance = MAXIMUMDISTANCE - (((this.x - potentialRepairCrew.x) + (this.y - potentialRepairCrew.y)) * distanceFactor / speedLimit);
+            //taxicab geometry
+            var distance = (MAXDISTANCE - (Math.abs(this.x - potentialRepairCrew.x) + Math.abs(this.y - potentialRepairCrew.y))) * distanceFactor / speedLimit;
             var people = this.peopleAffected * peopleFactor;
             var business = businessFactor[this.business].weight;
             var repairTime = (1 / this.repairEstimate) * repairTimeFactor;
-            var waitTime = (simulationTime - this.reportedTime) * waitTimeFactor / 3600; //convert wait time back to hours to match other time parameters
+            var waitTime = (simulationTime - this.reportedTime) * waitTimeFactor;
 
             var urgency = distance + people + business + repairTime + waitTime;
 
@@ -89,13 +77,12 @@
         }
 
         var crewNumber = 1;
-        function RepairCrew(x, y, powerOutage, lastOvertime) {
+        function RepairCrew(x, y, powerOutage) {
             this.x = x;
             this.y = y;
             this.powerOutage = powerOutage;
-            this.lastOvertime = lastOvertime;
             this.isCrewAvailable = isCrewAvailable;
-            this.workHoursRemaining = convertToSeconds(8, 0);
+            this.workHoursRemaining = 16;
             this.crewNumber = crewNumber;
 
             crewNumber++;
@@ -106,6 +93,7 @@
             repairCrews = [];
             allPowerOutages = [];
             simulationIsNotComplete = true;
+            stormIsActive = true;
 
             crewNumber = 1;
             powerOutageNumber = 1;
@@ -116,8 +104,8 @@
                 repairCrews.push(new RepairCrew(40, 40, null, null));
             }
 
-            allPowerOutages.push(new PowerOutageEvent(-25, -25, "cable", 100, convertToSeconds(2, 30), convertToSeconds(4, 30)));
-            allPowerOutages.push(new PowerOutageEvent(25, 25, "railroad", 100, convertToSeconds(2, 30), convertToSeconds(6, 30)));
+            allPowerOutages.push(new PowerOutageEvent(-25, -25, "cable", 100, 2.5, 4.5));
+            allPowerOutages.push(new PowerOutageEvent(25, 25, "railroad", 100, 2.5, 6.5));
 
             simulationTime = 0;
 
@@ -137,6 +125,7 @@
             var nextEvent = null;
             var nextEventDescription = "";
 
+            //check for new outage
             for (var j = 0; j < allPowerOutages.length; j++) {
                 var outage = allPowerOutages[j];
                 if (simulationTime < outage.reportedTime) {
@@ -156,6 +145,7 @@
                 }
             }
 
+            //check for outage fixed
             for (var i = 0; i < reportedPowerOutages.length; i++) {
                 var outage = reportedPowerOutages[i];
 
@@ -181,6 +171,7 @@
                 }
             }
 
+            //check for crew available to fix outage
             if (outagesWithoutCrews.length > 0) {
                 var maxUrgency = 0;
                 for (var i = 0; i < repairCrews.length; i++) {
@@ -193,14 +184,29 @@
                     for (var j = 0; j < outagesWithoutCrews.length; j++) {
                         var outage = outagesWithoutCrews[j];
 
+                        if (stormIsActive && ![outage.business].canRepairBeforeStormEnds) {
+                            continue; //we can't work on this outage yet
+                        }
+
                         var urgency = outage.powerOutageUrgency(crew);
 
                         if (urgency > maxUrgency) {
                             nextEvent = {crew: crew, outage: outage}
                             nextEventTime = 0;
                             nextEventDescription = "assign crew";
+                            maxUrgency = urgency;
                         }
                     }
+                }
+            }
+
+            //check if storm is ending
+            if (stormIsActive) {
+                var timeUntilStormEnds = stormEnds - simulationTime;
+                if (timeUntilStormEnds < nextEventTime) {
+                    nextEvent = {};
+                    nextEventTime = timeUntilStormEnds;
+                    nextEventDescription = "storm ends";
                 }
             }
 
@@ -222,8 +228,6 @@
                 }
                 else {
                     simulationTime += event.nextEventTime;
-                    var currentTime = convertToHourMinute(simulationTime);
-                    var timeString = zeroPadString(currentTime.hour, 2) + ":" + zeroPadString(currentTime.minute, 2) + ":" + zeroPadString(currentTime.second, 2);
                     switch (event.nextEventDescription) {
                         case "assign crew": {
                             var crew = event.nextEvent.crew;
@@ -233,9 +237,9 @@
                             powerOutage.repairCrew = crew;
                             powerOutage.workStartTime = simulationTime;
 
-                            powerOutage.repairEstimate += (Math.abs(powerOutage.x - crew.x) + Math.abs(powerOutage.y - crew.y)) * 3600 / speedLimit;
+                            powerOutage.repairEstimate += (Math.abs(powerOutage.x - crew.x) + Math.abs(powerOutage.y - crew.y)) / speedLimit;
 
-                            $("#outputLog").append("<p>Assigning crew number " + crew.crewNumber + " to outage " + powerOutage.powerOutageNumber + " at time " + timeString + "</p>");
+                            $("#outputLog").append("<p>Assigning crew number " + crew.crewNumber + " to outage " + powerOutage.powerOutageNumber + " at time " + simulationTime + "</p>");
                             break;
                         }
                         case "outage fixed": {
@@ -246,7 +250,7 @@
                             repairCrew.powerOutage = null; //relieve crew of duty first, then unassign crew from outage
                             powerOutage.repairCrew = null;
 
-                            $("#outputLog").append("<p>Outage number " + powerOutage.powerOutageNumber + " has been repaired. Work crew " + repairCrew.crewNumber + " finished at time " + timeString + ".</p>");
+                            $("#outputLog").append("<p>Outage number " + powerOutage.powerOutageNumber + " has been repaired. Work crew " + repairCrew.crewNumber + " finished at time " + simulationTime + ".</p>");
                             break;
                         }
                         case "new outage": {
@@ -254,7 +258,13 @@
 
                             reportedPowerOutages.push(powerOutage);
 
-                            $("#outputLog").append("<p>Outage number " + powerOutage.powerOutageNumber + " has been reported. Time is " + timeString + "</p>");
+                            $("#outputLog").append("<p>Outage number " + powerOutage.powerOutageNumber + " has been reported. Time is " + simulationTime + "</p>");
+                            break;
+                        }
+                        case "storm ends": {
+                            stormIsActive = false;
+
+                            $("#outputLog").append("<p>Storm ends. Time is " + simulationTime + "</p>");
                             break;
                         }
                     }
