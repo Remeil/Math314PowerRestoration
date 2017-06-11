@@ -16,7 +16,7 @@
 
         var reportedPowerOutages = [];
         var repairCrews = [];
-        var simulationTime = convertToSeconds(4, 30); //simulation times measured in seconds
+        var simulationTime = 0; //simulation times measured in seconds
         var stormIsActive = true;
         var stormEnds = convertToSeconds(6, 0);
         var simulationIsNotComplete = true;
@@ -60,7 +60,7 @@
             var people = this.peopleAffected * peopleFactor;
             var business = businessFactor[this.business].weight;
             var repairTime = (1 / this.repairEstimate) * repairTimeFactor;
-            var waitTime = (simulationTime - reportedTime) * waitTimeFactor / 3600; //convert wait time back to hours to match other time parameters
+            var waitTime = (simulationTime - this.reportedTime) * waitTimeFactor / 3600; //convert wait time back to hours to match other time parameters
 
             var urgency = distance + people + business + repairTime + waitTime;
 
@@ -107,20 +107,21 @@
             allPowerOutages = [];
             simulationIsNotComplete = true;
 
+            crewNumber = 1;
+            powerOutageNumber = 1;
+
             $("#outputLog").html("<p>Starting simulation...</p>");
             for (var i = 0; i < numberOfRepairCrewsAtEachLocation; i++) {
                 repairCrews.push(new RepairCrew(0, 0, null, null));
                 //repairCrews.push(new RepairCrew(40, 40, null, null));
             }
 
-            allPowerOutages.push(new PowerOutageEvent(-25, -25, "cable", 100, 2.5, convertToSeconds(4, 30)));
-            allPowerOutages.push(new PowerOutageEvent(25, 25, "railroad", 100, 2.5, convertToSeconds(8, 30)));
+            allPowerOutages.push(new PowerOutageEvent(-25, -25, "cable", 100, convertToSeconds(2, 30), convertToSeconds(4, 30)));
+            allPowerOutages.push(new PowerOutageEvent(25, 25, "railroad", 100, convertToSeconds(2, 30), convertToSeconds(8, 30)));
 
-            simulationTime = allPowerOutages[0].reportedTime;
+            simulationTime = 0;
 
-            reportedPowerOutages.push(allPowerOutages[0]);
-
-            activateSimulation();
+            runSimulation();
         }
 
         function nextEvent() {
@@ -176,7 +177,7 @@
 
             if (outagesWithoutCrews.length > 0) {
                 var maxUrgency = 0;
-                for (var i = 0; i < repairCrews; i++) {
+                for (var i = 0; i < repairCrews.length; i++) {
                     var crew = repairCrews[i];
 
                     if (!crew.isCrewAvailable()) {
@@ -205,7 +206,7 @@
             }
         }
 
-        function activateSimulation() {
+        function runSimulation() {
             while (simulationIsNotComplete) {
                 var event = nextEvent();
 
@@ -222,11 +223,11 @@
                             var crew = event.nextEvent.crew;
                             var powerOutage = event.nextEvent.outage;
 
-                            crew.powerOutage = outage;
+                            crew.powerOutage = powerOutage;
                             powerOutage.repairCrew = crew;
-                            powerOutage.repairStartTime = simulationTime;
+                            powerOutage.workStartTime = simulationTime;
 
-                            $("#outputLog").append("<p>Assigning crew number " + crew.crewNumber + " to outage " + outage.powerOutageNumber + " at time " + timeString + "</p>");
+                            $("#outputLog").append("<p>Assigning crew number " + crew.crewNumber + " to outage " + powerOutage.powerOutageNumber + " at time " + timeString + "</p>");
                             break;
                         }
                         case "outage fixed": {
@@ -236,7 +237,7 @@
                             powerOutage.repairCrew.powerOutage = null; //relieve crew of duty first, then unassign crew from outage
                             powerOutage.repairCrew = null;
 
-                            $("#outputLog").append("<p>Outage number " + outage.powerOutageNumber + " has been repaired. Work crew " + crew.crewNumber + " finished at time " + timeString + ".</p>");
+                            $("#outputLog").append("<p>Outage number " + powerOutage.powerOutageNumber + " has been repaired. Work crew " + crew.crewNumber + " finished at time " + timeString + ".</p>");
                             break;
                         }
                         case "new outage": {
