@@ -113,13 +113,19 @@
             $("#outputLog").html("<p>Starting simulation...</p>");
             for (var i = 0; i < numberOfRepairCrewsAtEachLocation; i++) {
                 repairCrews.push(new RepairCrew(0, 0, null, null));
-                //repairCrews.push(new RepairCrew(40, 40, null, null));
+                repairCrews.push(new RepairCrew(40, 40, null, null));
             }
 
             allPowerOutages.push(new PowerOutageEvent(-25, -25, "cable", 100, convertToSeconds(2, 30), convertToSeconds(4, 30)));
-            allPowerOutages.push(new PowerOutageEvent(25, 25, "railroad", 100, convertToSeconds(2, 30), convertToSeconds(8, 30)));
+            allPowerOutages.push(new PowerOutageEvent(25, 25, "railroad", 100, convertToSeconds(2, 30), convertToSeconds(6, 30)));
 
             simulationTime = 0;
+
+            speedLimit = $("#speedLimit").val();
+            distanceFactor = $("#distanceFactor").val();
+            peopleFactor = $("#peopleFactor").val();
+            repairTimeFactor = $("#repairTimeFactor").val();
+            waitTimeFactor = $("#waitTimeFactor").val();
 
             runSimulation();
         }
@@ -232,12 +238,13 @@
                         }
                         case "outage fixed": {
                             var powerOutage = event.nextEvent.outage;
+                            var repairCrew = powerOutage.repairCrew;
 
                             powerOutage.isFixed = true;
-                            powerOutage.repairCrew.powerOutage = null; //relieve crew of duty first, then unassign crew from outage
+                            repairCrew.powerOutage = null; //relieve crew of duty first, then unassign crew from outage
                             powerOutage.repairCrew = null;
 
-                            $("#outputLog").append("<p>Outage number " + powerOutage.powerOutageNumber + " has been repaired. Work crew " + crew.crewNumber + " finished at time " + timeString + ".</p>");
+                            $("#outputLog").append("<p>Outage number " + powerOutage.powerOutageNumber + " has been repaired. Work crew " + repairCrew.crewNumber + " finished at time " + timeString + ".</p>");
                             break;
                         }
                         case "new outage": {
