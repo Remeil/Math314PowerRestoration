@@ -10,6 +10,8 @@
         var simulationIsNotComplete = true;
         var personHoursWithoutElectricity = 0;
 
+        var recordedResults = [];
+
         var speedLimit = 60;
         var distanceFactor = 1;
         var peopleFactor = 1;
@@ -128,43 +130,45 @@
             }
 
             //x, y, business, peopleAffected, repairEstimate, reportedTime
-            allPowerOutages.push(new PowerOutageEvent(-10, 30, "cable", 0, 6, 4.333));
-            allPowerOutages.push(new PowerOutageEvent(3, 3, "residential", 20, 7, 5.5));
-            allPowerOutages.push(new PowerOutageEvent(20, 5, "hospital", 240, 8, 5.583));
-            allPowerOutages.push(new PowerOutageEvent(-10, 5, "railroad", 75025, 5, 5.916));
-            allPowerOutages.push(new PowerOutageEvent(13, 30, "residential", 45, 2, 6.083));
-            allPowerOutages.push(new PowerOutageEvent(5, 20, "area", 2000, 7, 6.1));
-            allPowerOutages.push(new PowerOutageEvent(60, 45, "residential", 0, 9, 6.133));
-            allPowerOutages.push(new PowerOutageEvent(1, 10, "cityHall", 0, 7, 6.15));
-            allPowerOutages.push(new PowerOutageEvent(5, 20, "shoppingMall", 200, 5, 6.25));
-            allPowerOutages.push(new PowerOutageEvent(5, -25, "fireDepartment", 15, 3, 6.333));
-            allPowerOutages.push(new PowerOutageEvent(12, 18, "residential", 350, 6, 6.333));
-            allPowerOutages.push(new PowerOutageEvent(7, 10, "area", 400, 6, 6.366));
-            allPowerOutages.push(new PowerOutageEvent(-1, 19, "industry", 190, 10, 6.416));
-            allPowerOutages.push(new PowerOutageEvent(-20, -19, "industry", 395, 7, 6.666));
-            allPowerOutages.push(new PowerOutageEvent(-1, 30, "area", 0, 6, 6.916));
-            allPowerOutages.push(new PowerOutageEvent(-20, 30, "highSchool", 1200, 3, 7));
-            allPowerOutages.push(new PowerOutageEvent(40, 20, "elementarySchool", 1700, 12, 7));
-            allPowerOutages.push(new PowerOutageEvent(7, -20, "restaurant", 25, 12, 7));
-            allPowerOutages.push(new PowerOutageEvent(8, -23, "policeStation", 125, 7, 7));
-            allPowerOutages.push(new PowerOutageEvent(25, 15, "elementarySchool", 1900, 5, 7.083));
-            allPowerOutages.push(new PowerOutageEvent(-10, -10, "residential", 0, 9, 7.166));
-            allPowerOutages.push(new PowerOutageEvent(-1, 2, "college", 3000, 8, 7.166));
-            allPowerOutages.push(new PowerOutageEvent(8, -25, "industry", 450, 5, 7.166));
-            allPowerOutages.push(new PowerOutageEvent(18, 55, "residential", 350, 10, 7.166));
-            allPowerOutages.push(new PowerOutageEvent(7, 35, "area", 400, 9, 7.333));
-            allPowerOutages.push(new PowerOutageEvent(20, 0, "residential", 800, 5, 7.75));
-            allPowerOutages.push(new PowerOutageEvent(-6, 30, "hospital", 300, 5, 7.833));
-            allPowerOutages.push(new PowerOutageEvent(0, 40, "stores", 50, 6, 8.25));
-            allPowerOutages.push(new PowerOutageEvent(15, -25, "trafficLights", 0, 3, 8.333));
-            allPowerOutages.push(new PowerOutageEvent(-20, -35, "bank", 20, 5, 8.583));
-            allPowerOutages.push(new PowerOutageEvent(47, 30, "residential", 40, 12, 8.833));
-            allPowerOutages.push(new PowerOutageEvent(55, 50, "residential", 0, 12, 9.833));
-            allPowerOutages.push(new PowerOutageEvent(-18, -35, "residential", 10, 10, 10.5));
-            allPowerOutages.push(new PowerOutageEvent(-1, 50, "civicCenter", 150, 5, 10.5));
-            allPowerOutages.push(new PowerOutageEvent(-7, -8, "airport", 350, 4, 10.583));
-            allPowerOutages.push(new PowerOutageEvent(5, -25, "fireDepartment", 15, 5, 10.833));
-            allPowerOutages.push(new PowerOutageEvent(8, 20, "area", 300, 12, 11.5));
+            // allPowerOutages.push(new PowerOutageEvent(-10, 30, "cable", 0, 6, 4.333));
+            // allPowerOutages.push(new PowerOutageEvent(3, 3, "residential", 20, 7, 5.5));
+            // allPowerOutages.push(new PowerOutageEvent(20, 5, "hospital", 240, 8, 5.583));
+            // allPowerOutages.push(new PowerOutageEvent(-10, 5, "railroad", 75025, 5, 5.916));
+            // allPowerOutages.push(new PowerOutageEvent(13, 30, "residential", 45, 2, 6.083));
+            // allPowerOutages.push(new PowerOutageEvent(5, 20, "area", 2000, 7, 6.1));
+            // allPowerOutages.push(new PowerOutageEvent(60, 45, "residential", 0, 9, 6.133));
+            // allPowerOutages.push(new PowerOutageEvent(1, 10, "cityHall", 0, 7, 6.15));
+            // allPowerOutages.push(new PowerOutageEvent(5, 20, "shoppingMall", 200, 5, 6.25));
+            // allPowerOutages.push(new PowerOutageEvent(5, -25, "fireDepartment", 15, 3, 6.333));
+            // allPowerOutages.push(new PowerOutageEvent(12, 18, "residential", 350, 6, 6.333));
+            // allPowerOutages.push(new PowerOutageEvent(7, 10, "area", 400, 6, 6.366));
+            // allPowerOutages.push(new PowerOutageEvent(-1, 19, "industry", 190, 10, 6.416));
+            // allPowerOutages.push(new PowerOutageEvent(-20, -19, "industry", 395, 7, 6.666));
+            // allPowerOutages.push(new PowerOutageEvent(-1, 30, "area", 0, 6, 6.916));
+            // allPowerOutages.push(new PowerOutageEvent(-20, 30, "highSchool", 1200, 3, 7));
+            // allPowerOutages.push(new PowerOutageEvent(40, 20, "elementarySchool", 1700, 12, 7));
+            // allPowerOutages.push(new PowerOutageEvent(7, -20, "restaurant", 25, 12, 7));
+            // allPowerOutages.push(new PowerOutageEvent(8, -23, "policeStation", 125, 7, 7));
+            // allPowerOutages.push(new PowerOutageEvent(25, 15, "elementarySchool", 1900, 5, 7.083));
+            // allPowerOutages.push(new PowerOutageEvent(-10, -10, "residential", 0, 9, 7.166));
+            // allPowerOutages.push(new PowerOutageEvent(-1, 2, "college", 3000, 8, 7.166));
+            // allPowerOutages.push(new PowerOutageEvent(8, -25, "industry", 450, 5, 7.166));
+            // allPowerOutages.push(new PowerOutageEvent(18, 55, "residential", 350, 10, 7.166));
+            // allPowerOutages.push(new PowerOutageEvent(7, 35, "area", 400, 9, 7.333));
+            // allPowerOutages.push(new PowerOutageEvent(20, 0, "residential", 800, 5, 7.75));
+            // allPowerOutages.push(new PowerOutageEvent(-6, 30, "hospital", 300, 5, 7.833));
+            // allPowerOutages.push(new PowerOutageEvent(0, 40, "stores", 50, 6, 8.25));
+            // allPowerOutages.push(new PowerOutageEvent(15, -25, "trafficLights", 0, 3, 8.333));
+            // allPowerOutages.push(new PowerOutageEvent(-20, -35, "bank", 20, 5, 8.583));
+            // allPowerOutages.push(new PowerOutageEvent(47, 30, "residential", 40, 12, 8.833));
+            // allPowerOutages.push(new PowerOutageEvent(55, 50, "residential", 0, 12, 9.833));
+            // allPowerOutages.push(new PowerOutageEvent(-18, -35, "residential", 10, 10, 10.5));
+            // allPowerOutages.push(new PowerOutageEvent(-1, 50, "civicCenter", 150, 5, 10.5));
+            // allPowerOutages.push(new PowerOutageEvent(-7, -8, "airport", 350, 4, 10.583));
+            // allPowerOutages.push(new PowerOutageEvent(5, -25, "fireDepartment", 15, 5, 10.833));
+            // allPowerOutages.push(new PowerOutageEvent(8, 20, "area", 300, 12, 11.5));
+
+            generateNewOutageSet();
 
             simulationTime = 0;
 
@@ -301,6 +305,16 @@
             }
         }
 
+        function saveResults(newEntry) {
+            var total = 0;
+
+            for (var i = 0; i < allPowerOutages.length; i++) {
+                total += allPowerOutages[i].repairEstimate * allPowerOutages[i].peopleAffected;
+            }
+
+            recordedResults.push({ measuredEntry: newEntry, bestPossible: total});
+        }
+
         function runSimulation() {
             while (simulationIsNotComplete) {
                 var event = nextEvent();
@@ -309,6 +323,8 @@
                     simulationIsNotComplete = false;
                     $("#outputLog").append("<p>Simulation complete!</p>");
                     $("#outputLog").append("<p>" + personHoursWithoutElectricity + " person hours were spent without electricity.</p>");
+
+                    saveResults(personHoursWithoutElectricity);
                 }
                 else {
                     simulationTime += event.nextEventTime;
@@ -376,6 +392,119 @@
             }
         }
 
+        //Function definition from https://stackoverflow.com/a/36481059
+        // Standard Normal variate using Box-Muller transform.
+        function randn_bm() {
+            var u = 1 - Math.random(); // Subtraction to flip [0, 1) to (0, 1].
+            var v = 1 - Math.random();
+            return Math.sqrt( -2.0 * Math.log( u ) ) * Math.cos( 2.0 * Math.PI * v );
+        }
+
+        function randNormal(mean, stdDev) {
+            return randn_bm() * stdDev + mean;
+        }
+
+        function randomBusiness() {
+            var business = Math.floor(Math.random() * 37);
+
+            //frequencies taken from analysis of problem's dataset
+            if (business <= 0) {
+                return "airport";
+            }
+            else if (business <= 5) {
+                return "area";
+            }
+            else if (business <= 6) {
+                return "bank";
+            }
+            else if (business <= 7) {
+                return "cable";
+            }
+            else if (business <= 8) {
+                return "cityHall";
+            }
+            else if (business <= 9) {
+                return "civicCenter";
+            }
+            else if (business <= 10) {
+                return "college";
+            }
+            else if (business <= 12) {
+                return "elementarySchool";
+            }
+            else if (business <= 14) {
+                return "fireDepartment";
+            }
+            else if (business <= 15) {
+                return "highSchool";
+            }
+            else if (business <= 17) {
+                return "hospital";
+            }
+            else if (business <= 20) {
+                return "industry";
+            }
+            else if (business <= 21) {
+                return "policeStation";
+            }
+            else if (business <= 22) {
+                return "railroad";
+            }
+            else if (business <= 32) {
+                return "residential";
+            }
+            else if (business <= 33) {
+                return "restaurant";
+            }
+            else if (business <= 34) {
+                return "shoppingMall";
+            }
+            else if (business <= 35) {
+                return "stores";
+            }
+            else if (business <= 36) {
+                return "trafficLights";
+            }
+        }
+
+        function randomPeople() {
+            var populationSize = Math.random();
+
+            // 1/40 chance to have large number of people affected
+            if (populationSize < .025) {
+                return Math.floor(Math.random() * 10001 + 70000); // 70000 - 80000
+            }
+            // 3/8 chance to have a moderate number of people affected
+            else if (populationSize < .4) {
+                return Math.floor(Math.random() * 2701 + 300); // 300 - 3000
+            }
+            // 3/5 chance to have a small number of people affected
+            else {
+                return Math.floor(Math.random() * 281 + 21); //20 - 300
+            }
+        }
+
+        function randomTime() {
+            return Math.floor(Math.random() * 10 + 3) //3-12
+        }
+
+        function generateNewOutageSet() {
+            var numberOfOutages = $("#numberOfOutages").val();
+            allPowerOutages = [];
+
+            powerOutageNumber = 1;
+            for (var i = 0; i < numberOfOutages; i++) {
+                var reportedTime = randNormal(7, 2);
+                var business = randomBusiness();
+                var xLocation = Math.floor(Math.random() * 81) - 20; // -20-60
+                var yLocation = Math.floor(Math.random() * 91) - 35; // -35-55
+                var peopleAffected = randomPeople();
+                var repairTime = randomTime();
+
+                allPowerOutages.push(new PowerOutageEvent(xLocation, yLocation, business, peopleAffected, repairTime, reportedTime));
+            }
+        }
+
         //Helper functions
         function zeroPadString(unformattedString, padLength) {
             var workingCopy = String(unformattedString);
@@ -389,8 +518,27 @@
 
         //event handlers
         $("#runIt").on("click", function() {
-            resetSimulation();
-        });
+            var maxNumberOfSimulations = $("#simulations").val();
 
+            recordedResults = [];
+
+            for (var i = 0; i < maxNumberOfSimulations; i++) {
+                resetSimulation();
+            }
+
+            var actualPersonHours = 0;
+            var idealPersonHours = 0;
+
+            recordedResults.map(function (result) {
+                actualPersonHours += result.measuredEntry;
+                idealPersonHours += result.bestPossible;
+            });
+
+            actualPersonHours /= maxNumberOfSimulations;
+            idealPersonHours /= maxNumberOfSimulations;
+
+            $("#outputLog").append("<p>All simulations complete. Average person hours waited: " + actualPersonHours + ". Ideal person hours waited: " + idealPersonHours + "</p>");
+
+        });
     })
 })();
