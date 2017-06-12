@@ -30,7 +30,8 @@
             trafficLights: {weight: 1, canRepairBeforeStormEnds: false},
             bank: {weight: 1, canRepairBeforeStormEnds: false},
             civicCenter: {weight: 1, canRepairBeforeStormEnds: false},
-            airport: {weight: 1, canRepairBeforeStormEnds: false}
+            airport: {weight: 1, canRepairBeforeStormEnds: false},
+            shoppingMall: {weight: 1, canRepairBeforeStormEnds: false}
         }
         var repairTimeFactor = 1;
         var waitTimeFactor = 1;
@@ -76,14 +77,32 @@
             return !this.powerOutage || this.powerOutage.repairEstimate === 0;
         }
 
+        function hasTime(outage) {
+            var travelTimeToOutage = (Math.abs(this.x - outage.x) + Math.abs(this.y - outage.y)) / speedLimit;
+            var travelHomeFromOutage = (Math.abs(outage.x - this.homeX) + Math.abs(outage.y - this.homeY)) / speedLimit;
+            var totalTime = travelHomeFromOutage + travelTimeToOutage + outage.repairEstimate;
+
+            if (this.nextShiftStartTime == null) {
+                return 16 >= totalTime;
+            }
+            else {
+                return (this.nextShiftStartTime - simulationTime - 8) >= totalTime;
+            }
+
+        }
+
         var crewNumber = 1;
         function RepairCrew(x, y, powerOutage) {
             this.x = x;
             this.y = y;
+            this.homeX = x;
+            this.homeY = y;
+            this.nextShiftStartTime = null;
+
+            this.crewNumber = crewNumber;
+            this.hasTime = hasTime;
             this.powerOutage = powerOutage;
             this.isCrewAvailable = isCrewAvailable;
-            this.workHoursRemaining = 16;
-            this.crewNumber = crewNumber;
 
             crewNumber++;
         }
@@ -106,6 +125,8 @@
 
             allPowerOutages.push(new PowerOutageEvent(-25, -25, "cable", 100, 2.5, 4.5));
             allPowerOutages.push(new PowerOutageEvent(25, 25, "railroad", 100, 2.5, 6.5));
+            allPowerOutages.push(new PowerOutageEvent(25, 25, "railroad", 100, 2.5, 29));
+            allPowerOutages.push(new PowerOutageEvent(25, 25, "railroad", 100, 2.5, 40));
 
             simulationTime = 0;
 
@@ -188,6 +209,10 @@
                             continue; //we can't work on this outage yet
                         }
 
+                        if (!crew.hasTime(outage))  {
+                            continue; //if we don't have enough time left in workday, then skip over this outage
+                        }
+
                         var urgency = outage.powerOutageUrgency(crew);
 
                         if (urgency > maxUrgency) {
@@ -200,6 +225,7 @@
                 }
             }
 
+
             //check if storm is ending
             if (stormIsActive) {
                 var timeUntilStormEnds = stormEnds - simulationTime;
@@ -207,6 +233,24 @@
                     nextEvent = {};
                     nextEventTime = timeUntilStormEnds;
                     nextEventDescription = "storm ends";
+                }
+            }
+            //check for crews shifts starting up again, but only if we aren't done
+            if (nextEvent != null) {
+                for (var i = 0; i < repairCrews.length; i++) {
+                    var crew = repairCrews[i];
+
+                    if (crew.nextShiftStartTime == null) {
+                        continue; //this crew hasn't been assigned something this shift yet, so they haven't started their shift yet;
+                    }
+
+                    var timeUntilCrewShift = crew.nextShiftStartTime - simulationTime;
+
+                    if (timeUntilCrewShift <= nextEventTime) {
+                        nextEvent = {crew: crew};
+                        nextEventTime = timeUntilCrewShift;
+                        nextEventDescription = "new shift";
+                    }
                 }
             }
 
@@ -239,6 +283,10 @@
 
                             powerOutage.repairEstimate += (Math.abs(powerOutage.x - crew.x) + Math.abs(powerOutage.y - crew.y)) / speedLimit;
 
+                            if (crew.nextShiftStartTime == null) {
+                                crew.nextShiftStartTime = simulationTime + 24;
+                            }
+
                             $("#outputLog").append("<p>Assigning crew number " + crew.crewNumber + " to outage " + powerOutage.powerOutageNumber + " at time " + simulationTime + "</p>");
                             break;
                         }
@@ -265,6 +313,16 @@
                             stormIsActive = false;
 
                             $("#outputLog").append("<p>Storm ends. Time is " + simulationTime + "</p>");
+                            break;
+                        }
+                        case "new shift": {
+                            var repairCrew = event.nextEvent.crew;
+
+                            repairCrew.nextShiftStartTime = null;
+                            repairCrew.x = repairCrew.homeX;
+                            repairCrew.y = repairCrew.homeY;
+
+                            $("#outputLog").append("<p>Repair crew " + repairCrew.crewNumber + " has started a new shift. Time is " + simulationTime + "</p>");
                             break;
                         }
                     }
