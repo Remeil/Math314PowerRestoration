@@ -19,22 +19,22 @@
         var specificBusinessFactor = {
             cable: {weight: 1, canRepairBeforeStormEnds: false},
             residential: {weight: 1, canRepairBeforeStormEnds: false},
-            hospital: {weight: 1, canRepairBeforeStormEnds: true},
-            railroad: {weight: 1, canRepairBeforeStormEnds: true},
+            hospital: {weight: 10, canRepairBeforeStormEnds: true},
+            railroad: {weight: 2, canRepairBeforeStormEnds: true},
             area: {weight: 1, canRepairBeforeStormEnds: false},
             cityHall: {weight: 1, canRepairBeforeStormEnds: false},
-            fireDepartment: {weight: 1, canRepairBeforeStormEnds: false},
+            fireDepartment: {weight: 8, canRepairBeforeStormEnds: false},
             industry: {weight: 1, canRepairBeforeStormEnds: false},
             highSchool: {weight: 1, canRepairBeforeStormEnds: false},
             elementarySchool: {weight: 1, canRepairBeforeStormEnds: false},
             restaurant: {weight: 1, canRepairBeforeStormEnds: false},
-            policeStation: {weight: 1, canRepairBeforeStormEnds: false},
+            policeStation: {weight: 5, canRepairBeforeStormEnds: false},
             college: {weight: 1, canRepairBeforeStormEnds: false},
             stores: {weight: 1, canRepairBeforeStormEnds: false},
-            trafficLights: {weight: 1, canRepairBeforeStormEnds: false},
+            trafficLights: {weight: 50, canRepairBeforeStormEnds: false},
             bank: {weight: 1, canRepairBeforeStormEnds: false},
             civicCenter: {weight: 1, canRepairBeforeStormEnds: false},
-            airport: {weight: 1, canRepairBeforeStormEnds: false},
+            airport: {weight: 2, canRepairBeforeStormEnds: false},
             shoppingMall: {weight: 1, canRepairBeforeStormEnds: false}
         }
         var repairTimeFactor = 1;
