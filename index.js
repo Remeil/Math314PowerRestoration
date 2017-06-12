@@ -66,6 +66,7 @@
             this.repairEstimate = repairEstimate;
             this.reportedTime = reportedTime;
             this.repairCrew = repairCrew;
+            this.isReported = false;
             this.workStartTime = -1;
             this.isFixed = false;
             this.powerOutageUrgency = powerOutageUrgency;
@@ -185,7 +186,7 @@
             //check for new outage
             for (var j = 0; j < allPowerOutages.length; j++) {
                 var outage = allPowerOutages[j];
-                if (simulationTime < outage.reportedTime) {
+                if (simulationTime <= outage.reportedTime && !outage.isReported) {
                     var timeUntilOutage = outage.reportedTime - simulationTime;
 
                     if (!nextEventExists) {
@@ -340,6 +341,7 @@
                         case "new outage": {
                             var powerOutage = event.nextEvent.outage;
 
+                            powerOutage.isReported = true;
                             reportedPowerOutages.push(powerOutage);
 
                             $("#outputLog").append("<p>Outage number " + powerOutage.powerOutageNumber + " has been reported. Time is " + simulationTime + "</p>");
