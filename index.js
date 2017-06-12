@@ -8,6 +8,7 @@
         var stormIsActive = true;
         var stormEnds = 6; //storm ends at 6
         var simulationIsNotComplete = true;
+        var personHoursWithoutElectricity = 0;
 
         var speedLimit = 60;
         var distanceFactor = 1;
@@ -115,6 +116,7 @@
             allPowerOutages = [];
             simulationIsNotComplete = true;
             stormIsActive = true;
+            personHoursWithoutElectricity = 0;
 
             crewNumber = 1;
             powerOutageNumber = 1;
@@ -306,6 +308,7 @@
                 if (event.done) {
                     simulationIsNotComplete = false;
                     $("#outputLog").append("<p>Simulation complete!</p>");
+                    $("#outputLog").append("<p>" + personHoursWithoutElectricity + " person hours were spent without electricity.</p>");
                 }
                 else {
                     simulationTime += event.nextEventTime;
@@ -336,6 +339,9 @@
                             powerOutage.isFixed = true;
                             repairCrew.powerOutage = null; //relieve crew of duty first, then unassign crew from outage
                             powerOutage.repairCrew = null;
+
+                            var timeWithoutElectricity = simulationTime - powerOutage.reportedTime;
+                            personHoursWithoutElectricity += powerOutage.peopleAffected * timeWithoutElectricity;
 
                             $("#outputLog").append("<p>Outage number " + powerOutage.powerOutageNumber + " has been repaired. Work crew " + repairCrew.crewNumber + " finished at time " + simulationTime + ".</p>");
                             break;
