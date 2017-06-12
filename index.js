@@ -315,6 +315,8 @@
                             var powerOutage = event.nextEvent.outage;
 
                             crew.powerOutage = powerOutage;
+                            crew.x = powerOutage.x;
+                            crew.y = powerOutage.y;
                             powerOutage.repairCrew = crew;
                             powerOutage.workStartTime = simulationTime;
 
