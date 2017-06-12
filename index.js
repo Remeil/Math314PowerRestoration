@@ -129,45 +129,6 @@
                 repairCrews.push(new RepairCrew(40, 40, null, null));
             }
 
-            //x, y, business, peopleAffected, repairEstimate, reportedTime
-            // allPowerOutages.push(new PowerOutageEvent(-10, 30, "cable", 0, 6, 4.333));
-            // allPowerOutages.push(new PowerOutageEvent(3, 3, "residential", 20, 7, 5.5));
-            // allPowerOutages.push(new PowerOutageEvent(20, 5, "hospital", 240, 8, 5.583));
-            // allPowerOutages.push(new PowerOutageEvent(-10, 5, "railroad", 75025, 5, 5.916));
-            // allPowerOutages.push(new PowerOutageEvent(13, 30, "residential", 45, 2, 6.083));
-            // allPowerOutages.push(new PowerOutageEvent(5, 20, "area", 2000, 7, 6.1));
-            // allPowerOutages.push(new PowerOutageEvent(60, 45, "residential", 0, 9, 6.133));
-            // allPowerOutages.push(new PowerOutageEvent(1, 10, "cityHall", 0, 7, 6.15));
-            // allPowerOutages.push(new PowerOutageEvent(5, 20, "shoppingMall", 200, 5, 6.25));
-            // allPowerOutages.push(new PowerOutageEvent(5, -25, "fireDepartment", 15, 3, 6.333));
-            // allPowerOutages.push(new PowerOutageEvent(12, 18, "residential", 350, 6, 6.333));
-            // allPowerOutages.push(new PowerOutageEvent(7, 10, "area", 400, 6, 6.366));
-            // allPowerOutages.push(new PowerOutageEvent(-1, 19, "industry", 190, 10, 6.416));
-            // allPowerOutages.push(new PowerOutageEvent(-20, -19, "industry", 395, 7, 6.666));
-            // allPowerOutages.push(new PowerOutageEvent(-1, 30, "area", 0, 6, 6.916));
-            // allPowerOutages.push(new PowerOutageEvent(-20, 30, "highSchool", 1200, 3, 7));
-            // allPowerOutages.push(new PowerOutageEvent(40, 20, "elementarySchool", 1700, 12, 7));
-            // allPowerOutages.push(new PowerOutageEvent(7, -20, "restaurant", 25, 12, 7));
-            // allPowerOutages.push(new PowerOutageEvent(8, -23, "policeStation", 125, 7, 7));
-            // allPowerOutages.push(new PowerOutageEvent(25, 15, "elementarySchool", 1900, 5, 7.083));
-            // allPowerOutages.push(new PowerOutageEvent(-10, -10, "residential", 0, 9, 7.166));
-            // allPowerOutages.push(new PowerOutageEvent(-1, 2, "college", 3000, 8, 7.166));
-            // allPowerOutages.push(new PowerOutageEvent(8, -25, "industry", 450, 5, 7.166));
-            // allPowerOutages.push(new PowerOutageEvent(18, 55, "residential", 350, 10, 7.166));
-            // allPowerOutages.push(new PowerOutageEvent(7, 35, "area", 400, 9, 7.333));
-            // allPowerOutages.push(new PowerOutageEvent(20, 0, "residential", 800, 5, 7.75));
-            // allPowerOutages.push(new PowerOutageEvent(-6, 30, "hospital", 300, 5, 7.833));
-            // allPowerOutages.push(new PowerOutageEvent(0, 40, "stores", 50, 6, 8.25));
-            // allPowerOutages.push(new PowerOutageEvent(15, -25, "trafficLights", 0, 3, 8.333));
-            // allPowerOutages.push(new PowerOutageEvent(-20, -35, "bank", 20, 5, 8.583));
-            // allPowerOutages.push(new PowerOutageEvent(47, 30, "residential", 40, 12, 8.833));
-            // allPowerOutages.push(new PowerOutageEvent(55, 50, "residential", 0, 12, 9.833));
-            // allPowerOutages.push(new PowerOutageEvent(-18, -35, "residential", 10, 10, 10.5));
-            // allPowerOutages.push(new PowerOutageEvent(-1, 50, "civicCenter", 150, 5, 10.5));
-            // allPowerOutages.push(new PowerOutageEvent(-7, -8, "airport", 350, 4, 10.583));
-            // allPowerOutages.push(new PowerOutageEvent(5, -25, "fireDepartment", 15, 5, 10.833));
-            // allPowerOutages.push(new PowerOutageEvent(8, 20, "area", 300, 12, 11.5));
-
             generateNewOutageSet();
 
             simulationTime = 0;
