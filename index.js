@@ -177,7 +177,7 @@
         }
 
         function nextEvent() {
-            var nextEventTime = -1;
+            var nextEventTime = 999;
             var nextEventExists = false;
             var outagesWithoutCrews = [];
             var nextEvent = null;
@@ -273,7 +273,7 @@
                 }
             }
             //check for crews shifts starting up again, but only if we aren't done
-            if (nextEvent != null) {
+            if (true) {
                 for (var i = 0; i < repairCrews.length; i++) {
                     var crew = repairCrews[i];
 
